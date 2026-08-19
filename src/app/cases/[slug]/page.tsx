@@ -1,0 +1,73 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import { getMarkdownHeadings, MarkdownDocument } from '@/lib/markdown';
+import { getAllCases, getCaseBySlug, getCaseMarkdown, getSourceRepositoryUrl, removeMarkdownSection } from '@/lib/portfolio';
+
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return getAllCases().map((portfolioCase) => ({ slug: portfolioCase.slug }));
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const portfolioCase = getCaseBySlug(slug);
+  if (!portfolioCase) return {};
+  return {
+    title: portfolioCase.title,
+    description: portfolioCase.question,
+    alternates: { canonical: `/cases/${portfolioCase.slug}/` },
+    openGraph: {
+      title: `${portfolioCase.title} | 김정식`,
+      description: portfolioCase.question,
+      url: `/cases/${portfolioCase.slug}/`
+    }
+  };
+}
+
+export default async function CasePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const portfolioCase = getCaseBySlug(slug);
+  if (!portfolioCase) notFound();
+
+  const markdown = removeMarkdownSection(getCaseMarkdown(portfolioCase), '핵심 질문');
+  const headings = getMarkdownHeadings(markdown).filter((heading) => heading.level === 2 && heading.text !== '한눈에 보기');
+  const sourceUrl = `${getSourceRepositoryUrl()}/blob/main/${portfolioCase.file}`;
+
+  return (
+    <div className="case-page section-shell">
+      <header className="case-hero">
+        <Link className="back-link" href="/#cases">← 대표 사례</Link>
+        <div className="case-hero-meta">
+          <span>CASE {String(portfolioCase.order).padStart(2, '0')}</span>
+          <span>{portfolioCase.classification === 'public-rnd' ? '공개 개발 자료' : '실무 사례'}</span>
+        </div>
+        <h1>{portfolioCase.title}</h1>
+        <p>{portfolioCase.question}</p>
+        <Link className="text-link" href={sourceUrl}>GitHub 원문 보기 <span aria-hidden>↗</span></Link>
+      </header>
+
+      <div className="case-layout">
+        <aside className="case-toc" aria-label="사례 목차">
+          <strong>목차</strong>
+          <nav>
+            {headings.map((heading) => <Link key={heading.id} href={`#${heading.id}`}>{heading.text}</Link>)}
+          </nav>
+        </aside>
+        <article className="case-article">
+          <MarkdownDocument markdown={markdown} skipFirstHeading />
+        </article>
+      </div>
+
+      <nav className="case-next" aria-label="다른 사례">
+        {getAllCases().filter((item) => item.id !== portfolioCase.id).map((item) => (
+          <Link key={item.id} href={`/cases/${item.slug}/`}>
+            <span>{String(item.order).padStart(2, '0')}</span>
+            {item.title}
+          </Link>
+        ))}
+      </nav>
+    </div>
+  );
+}
