@@ -1,6 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { getAllCases } from '@/lib/portfolio';
 
+export const dynamic = 'force-static';
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://tomtomjskim.github.io';
   return [
