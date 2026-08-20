@@ -6,5 +6,5 @@
   <text x="72" y="370" font-size="31" font-family="Noto Sans KR, Malgun Gothic, sans-serif" fill="#444444">커머스 · 물류 · MES · 개발자 도구 · 검증 가능한 AI 활용</text>
   <line x1="72" y1="500" x2="1128" y2="500" stroke="#d9d9d7" stroke-width="2"/>
   <text x="72" y="558" font-size="24" font-family="Arial, sans-serif" fill="#181818">tomtomjskim.github.io</text>
-  <text x="1128" y="558" text-anchor="end" font-size="22" font-family="Arial, sans-serif" fill="#777777">PORTFOLIO / 2026</text>
+  <text x="1128" y="558" text-anchor="end" font-size="22" font-family="Noto Sans KR, Malgun Gothic, sans-serif" fill="#777777">포트폴리오 · 2026</text>
 </svg>
