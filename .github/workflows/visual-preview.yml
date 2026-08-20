@@ -43,9 +43,9 @@ jobs:
           npx --yes wait-on@8 http://127.0.0.1:4173
           mkdir -p screenshots
           npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="1440,1200" --full-page http://127.0.0.1:4173/ screenshots/home-desktop.png
-          npx --yes playwright@1.55.0 screenshot --browser=chromium --device="iPhone 13" --full-page http://127.0.0.1:4173/ screenshots/home-mobile.png
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="390,844" --full-page http://127.0.0.1:4173/ screenshots/home-mobile.png
           npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="1440,1200" --full-page http://127.0.0.1:4173/cases/commerce-change-impact/ screenshots/case-desktop.png
-          npx --yes playwright@1.55.0 screenshot --browser=chromium --device="iPhone 13" --full-page http://127.0.0.1:4173/cases/commerce-change-impact/ screenshots/case-mobile.png
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="390,844" --full-page http://127.0.0.1:4173/cases/commerce-change-impact/ screenshots/case-mobile.png
 
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
