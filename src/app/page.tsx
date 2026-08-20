@@ -68,29 +68,31 @@ export default function HomePage() {
           <p>회사 실무 사례와 구분되는 공개 코드·문서·검증 기록입니다.</p>
         </header>
 
-        {publicCases.length ? (
-          <div className="case-index public-case-index">
-            {publicCases.map((portfolioCase) => (
-              <CaseCard key={portfolioCase.id} portfolioCase={portfolioCase} />
+        <div className="index-section-body">
+          {publicCases.length ? (
+            <div className="case-index public-case-index">
+              {publicCases.map((portfolioCase) => (
+                <CaseCard key={portfolioCase.id} portfolioCase={portfolioCase} />
+              ))}
+            </div>
+          ) : null}
+
+          <div className="evidence-list">
+            {evidence.map((item) => (
+              <article className="evidence-row" key={item.id}>
+                <div>
+                  <p className="evidence-kind">{item.kind}</p>
+                  <h3>{item.title}</h3>
+                </div>
+                <p>{item.shows}</p>
+                {item.repository ? <Link href={item.repository}>저장소 ↗</Link> : null}
+              </article>
             ))}
           </div>
-        ) : null}
-
-        <div className="evidence-list">
-          {evidence.map((item) => (
-            <article className="evidence-row" key={item.id}>
-              <div>
-                <p className="evidence-kind">{item.kind}</p>
-                <h3>{item.title}</h3>
-              </div>
-              <p>{item.shows}</p>
-              {item.repository ? <Link href={item.repository}>저장소 ↗</Link> : null}
-            </article>
-          ))}
+          <p className="section-note">
+            공개 자료의 확인 가능한 범위와 한계는 <Link href="/about/#public-evidence">소개 페이지</Link>에 따로 정리했습니다.
+          </p>
         </div>
-        <p className="section-note">
-          공개 자료의 확인 가능한 범위와 한계는 <Link href="/about/#public-evidence">소개 페이지</Link>에 따로 정리했습니다.
-        </p>
       </section>
     </div>
   );
