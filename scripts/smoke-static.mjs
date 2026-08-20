@@ -24,14 +24,26 @@ for (const text of ['업무 사례', '공개 개발 자료', '커머스·물류 
   if (!home.includes(text)) throw new Error(`홈 화면 필수 문구 없음: ${text}`);
 }
 
-if (home.includes('대표 사례')) {
-  throw new Error('승인되지 않은 대표 사례 표현이 홈에 남아 있음');
+for (const text of ['대표 사례', '작업 방식', '소개와 작업 기준']) {
+  if (home.includes(text)) throw new Error(`홈 화면에 불필요한 내부·연출 문구가 남아 있음: ${text}`);
 }
+
+const privateOnlyTerms = [
+  '면접 예상 질문',
+  '인터뷰 예상 질문',
+  'Interview Hooks',
+  '면접 대응',
+  '리허설 기록',
+  'Role Adapter'
+];
 
 for (const file of required.filter((item) => item.endsWith('.html'))) {
   const html = fs.readFileSync(path.join(root, file), 'utf8');
   if (html.includes('jsnetworkcorp-portfolio') || html.includes('dna_project')) {
     throw new Error(`공개 금지 문자열 발견: ${file}`);
+  }
+  for (const term of privateOnlyTerms) {
+    if (html.includes(term)) throw new Error(`내부 전용 자료가 공개 화면에 포함됨: ${file} / ${term}`);
   }
 }
 
