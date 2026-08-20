@@ -1,0 +1,55 @@
+name: Visual preview
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  screenshots:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout site
+        uses: actions/checkout@v6
+
+      - name: Checkout portfolio source
+        uses: actions/checkout@v6
+        with:
+          repository: tomtomjskim/portfolio
+          ref: main
+          path: portfolio-source
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install and build
+        run: |
+          npm ci
+          npm run build
+        env:
+          PORTFOLIO_SOURCE_DIR: portfolio-source
+
+      - name: Install browser
+        run: npx --yes playwright@1.55.0 install --with-deps chromium
+
+      - name: Capture desktop and mobile
+        run: |
+          npx --yes http-server@14 out -p 4173 -c-1 > /tmp/site.log 2>&1 &
+          npx --yes wait-on@8 http://127.0.0.1:4173
+          mkdir -p screenshots
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="1440,1200" --full-page http://127.0.0.1:4173/ screenshots/home-desktop.png
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --device="iPhone 13" --full-page http://127.0.0.1:4173/ screenshots/home-mobile.png
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --viewport-size="1440,1200" --full-page http://127.0.0.1:4173/cases/commerce-change-impact/ screenshots/case-desktop.png
+          npx --yes playwright@1.55.0 screenshot --browser=chromium --device="iPhone 13" --full-page http://127.0.0.1:4173/cases/commerce-change-impact/ screenshots/case-mobile.png
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: redesign-screenshots
+          path: screenshots
+          if-no-files-found: error
