@@ -9,50 +9,76 @@ import {
 export default function HomePage() {
   const cases = getAllCases();
   const workCases = cases.filter((item) => item.classification !== 'public-rnd');
+  const publicCases = cases.filter((item) => item.classification === 'public-rnd');
   const evidence = getPublicEngineeringEvidence();
 
   return (
     <div className="home-page">
-      <section className="home-intro section-shell">
-        <p className="intro-kicker">김정식 · 백엔드 개발자</p>
-        <h1>PHP/MySQL 기반 커머스·물류·MES 업무시스템을 개발하고 운영해 왔습니다.</h1>
-        <div className="inline-links" aria-label="주요 링크">
-          <Link href="#cases">업무 사례</Link>
-          <Link href={getSourceRepositoryUrl()}>GitHub 원문 ↗</Link>
+      <header className="profile-index section-shell">
+        <div className="profile-identity">
+          <h1>김정식</h1>
+          <p>백엔드 개발자</p>
         </div>
-      </section>
+        <div className="profile-summary">
+          <p>
+            PHP/MySQL 기반 커머스·물류·MES 업무시스템을 개발하고 운영해 왔습니다.
+            화면에 보이는 증상보다 상태·데이터·권한·관리자·배치·외부 연동이 실제로 연결되는 범위를 먼저 확인합니다.
+          </p>
+          <dl>
+            <div><dt>주력</dt><dd>PHP / MySQL 백엔드</dd></div>
+            <div><dt>업무 영역</dt><dd>커머스 · 물류 · MES</dd></div>
+            <div><dt>작업 기준</dt><dd>변경 영향 분석 · 검증</dd></div>
+          </dl>
+          <nav className="profile-links" aria-label="외부 링크">
+            <Link href="/about/">소개</Link>
+            <Link href={getSourceRepositoryUrl()}>포트폴리오 원문 ↗</Link>
+            <Link href="https://github.com/tomtomjskim">GitHub ↗</Link>
+          </nav>
+        </div>
+      </header>
 
-      <section className="home-section section-shell" id="cases">
-        <header className="editorial-heading">
-          <div>
-            <h2>업무 사례</h2>
-            <p>실제 업무 경험을 공개 가능한 범위로 정리한 문서입니다.</p>
-          </div>
+      <section className="index-section section-shell" id="work">
+        <header className="index-section-heading">
+          <h2>업무 사례</h2>
+          <p>실제 업무에서 다룬 문제와 판단을 공개 가능한 범위로 정리했습니다.</p>
         </header>
         <div className="case-index">
-          {workCases.map((portfolioCase) => <CaseCard key={portfolioCase.id} portfolioCase={portfolioCase} />)}
+          {workCases.map((portfolioCase) => (
+            <CaseCard key={portfolioCase.id} portfolioCase={portfolioCase} />
+          ))}
         </div>
       </section>
 
-      <section className="home-section section-shell">
-        <header className="editorial-heading">
-          <div>
-            <h2>공개 개발 자료</h2>
-            <p>회사 실무와 구분되는 공개 코드·문서·검증 기록입니다.</p>
-          </div>
+      <section className="index-section section-shell" id="public">
+        <header className="index-section-heading">
+          <h2>공개 개발 자료</h2>
+          <p>회사 실무 사례와 구분되는 공개 코드·문서·검증 기록입니다.</p>
         </header>
-        <div className="evidence-list">
-          {evidence.map((item, index) => (
-            <article className="evidence-row" key={item.id}>
-              <span className="evidence-number">{String(index + 1).padStart(2, '0')}</span>
-              <div>
-                <p className="evidence-kind">{item.kind}</p>
-                <h3>{item.title}</h3>
-              </div>
-              <p>{item.shows}</p>
-              {item.repository ? <Link href={item.repository}>저장소 보기 ↗</Link> : <span />}
-            </article>
-          ))}
+
+        <div className="index-section-body">
+          {publicCases.length ? (
+            <div className="case-index public-case-index">
+              {publicCases.map((portfolioCase) => (
+                <CaseCard key={portfolioCase.id} portfolioCase={portfolioCase} />
+              ))}
+            </div>
+          ) : null}
+
+          <div className="evidence-list">
+            {evidence.map((item) => (
+              <article className="evidence-row" key={item.id}>
+                <div>
+                  <p className="evidence-kind">{item.kind}</p>
+                  <h3>{item.title}</h3>
+                </div>
+                <p>{item.shows}</p>
+                {item.repository ? <Link href={item.repository}>저장소 ↗</Link> : null}
+              </article>
+            ))}
+          </div>
+          <p className="section-note">
+            공개 자료의 확인 가능한 범위와 한계는 <Link href="/about/#public-evidence">소개 페이지</Link>에 따로 정리했습니다.
+          </p>
         </div>
       </section>
     </div>
