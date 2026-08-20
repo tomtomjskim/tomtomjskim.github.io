@@ -1,54 +1,57 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { MarkdownDocument } from '@/lib/markdown';
-import {
-  extractMarkdownSections,
-  getEvidenceMarkdown,
-  getPublicBoundaryMarkdown,
-  getViewMarkdown
-} from '@/lib/portfolio';
+import { getPublicEngineeringEvidence } from '@/lib/portfolio';
 
 export const metadata: Metadata = {
-  title: '소개와 작업 기준',
-  description: '김정식의 백엔드 개발 관점, AI 활용 기준, 공개 근거와 공개 범위를 정리합니다.',
+  title: '소개',
+  description: '김정식의 백엔드 개발 경력과 공개 개발 자료를 간단히 정리합니다.',
   alternates: { canonical: '/about/' }
 };
 
 export default function AboutPage() {
-  const backend = extractMarkdownSections(getViewMarkdown('general-backend'), ['30초 요약', '사례에서 드러나는 개발 판단']);
-  const ai = extractMarkdownSections(getViewMarkdown('ai-assisted-internal-tools'), ['AI·일반 코드·사람의 책임', '완료 판단 기준']);
-  const evidence = getEvidenceMarkdown();
-  const boundary = getPublicBoundaryMarkdown();
+  const evidence = getPublicEngineeringEvidence();
 
   return (
     <div className="document-page section-shell">
       <header className="document-intro">
-        <h1>소개와 작업 기준</h1>
-        <p>경력 사례와 공개 개발 자료를 구분하고, 확인 가능한 범위만 설명합니다.</p>
+        <h1>소개</h1>
+        <p>PHP/MySQL 기반 커머스·물류·MES 업무시스템을 개발하고 운영해 왔습니다.</p>
       </header>
 
-      <section className="document-section" id="backend">
-        <header className="document-section-heading"><h2>백엔드 개발 관점</h2></header>
-        <div className="document-section-body"><MarkdownDocument markdown={backend} /></div>
-      </section>
-
-      <section className="document-section" id="ai">
-        <header className="document-section-heading"><h2>AI 활용과 내부 도구</h2></header>
-        <div className="document-section-body"><MarkdownDocument markdown={ai} /></div>
+      <section className="document-section">
+        <header className="document-section-heading"><h2>경력 요약</h2></header>
+        <div className="document-section-body">
+          <p>
+            사용자 화면과 관리자 기능, DB 상태, batch/cron, 외부 API가 함께 움직이는 운영형 시스템을 주로 다뤘습니다.
+            공개 포트폴리오에는 실제 업무 경험을 비식별화한 문서와 별도로 확인할 수 있는 공개 개발 자료만 정리합니다.
+          </p>
+          <ul>
+            <li>PHP / MySQL 기반 백엔드와 업무시스템</li>
+            <li>커머스·오픈마켓, 물류·배송, 제조 MES</li>
+            <li>상품·주문·배송·클레임·정산·관리자·외부 연동</li>
+            <li>현장 도입·교육·원격지원과 운영 문제 분석</li>
+          </ul>
+        </div>
       </section>
 
       <section className="document-section" id="public-evidence">
-        <header className="document-section-heading"><h2>공개 근거와 해석 범위</h2></header>
-        <div className="document-section-body"><MarkdownDocument markdown={evidence} skipFirstHeading /></div>
-      </section>
-
-      <section className="document-section">
-        <header className="document-section-heading"><h2>공개 범위</h2></header>
-        <div className="document-section-body"><MarkdownDocument markdown={boundary} skipFirstHeading /></div>
+        <header className="document-section-heading"><h2>공개 개발 자료</h2></header>
+        <div className="document-section-body evidence-list">
+          {evidence.map((item) => (
+            <article className="evidence-row" key={item.id}>
+              <div>
+                <p className="evidence-kind">{item.kind}</p>
+                <h3>{item.title}</h3>
+              </div>
+              <p>{item.shows}</p>
+              {item.repository ? <Link href={item.repository}>저장소 ↗</Link> : null}
+            </article>
+          ))}
+        </div>
       </section>
 
       <footer className="document-links">
-        <h2>원문과 변경 이력</h2>
+        <h2>관련 링크</h2>
         <p>
           <Link href="https://github.com/tomtomjskim/portfolio">포트폴리오 원문 ↗</Link>
           {' · '}
