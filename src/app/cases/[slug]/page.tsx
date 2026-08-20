@@ -26,6 +26,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
+const privateOnlySections = [
+  '핵심 질문',
+  '면접 예상 질문',
+  '인터뷰 예상 질문',
+  'Interview Hooks',
+  '면접 대응',
+  '리허설'
+];
+
 export default async function CasePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const portfolioCase = getCaseBySlug(slug);
@@ -33,7 +42,10 @@ export default async function CasePage({ params }: { params: Promise<{ slug: str
 
   const allCases = getAllCases();
   const isPublicRnd = portfolioCase.classification === 'public-rnd';
-  const markdown = removeMarkdownSection(getCaseMarkdown(portfolioCase), '핵심 질문');
+  const markdown = privateOnlySections.reduce(
+    (current, section) => removeMarkdownSection(current, section),
+    getCaseMarkdown(portfolioCase)
+  );
   const headings = getMarkdownHeadings(markdown).filter((heading) => heading.level === 2 && heading.text !== '한눈에 보기');
   const sourceUrl = `${getSourceRepositoryUrl()}/blob/main/${portfolioCase.file}`;
   const classification = isPublicRnd ? '공개 개발 자료' : '업무 사례';
