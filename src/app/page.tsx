@@ -24,11 +24,6 @@ export default function HomePage() {
             PHP/MySQL 기반 커머스·물류·MES 업무시스템을 개발하고 운영해 왔습니다.
             화면에 보이는 증상보다 상태·데이터·권한·관리자·배치·외부 연동이 실제로 연결되는 범위를 먼저 확인합니다.
           </p>
-          <dl>
-            <div><dt>주력</dt><dd>PHP / MySQL 백엔드</dd></div>
-            <div><dt>업무 영역</dt><dd>커머스 · 물류 · MES</dd></div>
-            <div><dt>작업 기준</dt><dd>변경 영향 분석 · 검증</dd></div>
-          </dl>
           <nav className="profile-links" aria-label="외부 링크">
             <Link href="/about/">소개</Link>
             <Link href={getSourceRepositoryUrl()}>포트폴리오 원문 ↗</Link>

@@ -24,7 +24,7 @@ for (const text of ['업무 사례', '공개 개발 자료', '커머스·물류 
   if (!home.includes(text)) throw new Error(`홈 화면 필수 문구 없음: ${text}`);
 }
 
-for (const text of ['대표 사례', '작업 방식', '소개와 작업 기준']) {
+for (const text of ['대표 사례', '작업 방식', '작업 기준', '소개와 작업 기준']) {
   if (home.includes(text)) throw new Error(`홈 화면에 불필요한 내부·연출 문구가 남아 있음: ${text}`);
 }
 
