@@ -31,24 +31,26 @@ export default async function CasePage({ params }: { params: Promise<{ slug: str
   const portfolioCase = getCaseBySlug(slug);
   if (!portfolioCase) notFound();
 
+  const allCases = getAllCases();
+  const isPublicRnd = portfolioCase.classification === 'public-rnd';
   const markdown = removeMarkdownSection(getCaseMarkdown(portfolioCase), '핵심 질문');
   const headings = getMarkdownHeadings(markdown).filter((heading) => heading.level === 2 && heading.text !== '한눈에 보기');
   const sourceUrl = `${getSourceRepositoryUrl()}/blob/main/${portfolioCase.file}`;
-  const classification = portfolioCase.classification === 'public-rnd' ? '공개 개발 자료' : '실무 사례';
+  const classification = isPublicRnd ? '공개 개발 자료' : '업무 사례';
+  const backHref = isPublicRnd ? '/#public' : '/#work';
+  const backLabel = isPublicRnd ? '공개 개발 자료' : '업무 사례';
+  const relatedCases = isPublicRnd
+    ? allCases.filter((item) => item.classification !== 'public-rnd')
+    : allCases.filter((item) => item.classification !== 'public-rnd' && item.id !== portfolioCase.id);
 
   return (
     <div className="case-page section-shell">
       <header className="case-intro">
-        <Link className="back-link" href="/#cases">← 대표 사례</Link>
-        <div className="case-intro-meta">
-          <span>{String(portfolioCase.order).padStart(2, '0')}</span>
-          <span>{classification}</span>
-        </div>
+        <Link className="back-link" href={backHref}>← {backLabel}</Link>
+        <p className="case-classification">{classification}</p>
         <h1>{portfolioCase.title}</h1>
         <p className="case-intro-question">{portfolioCase.question}</p>
-        <div className="inline-links">
-          <Link href={sourceUrl}>GitHub 원문 보기 ↗</Link>
-        </div>
+        <p className="case-source-link"><Link href={sourceUrl}>GitHub 원문 ↗</Link></p>
       </header>
 
       <div className="case-layout">
@@ -63,11 +65,10 @@ export default async function CasePage({ params }: { params: Promise<{ slug: str
         </article>
       </div>
 
-      <nav className="case-next" aria-label="다른 사례">
-        <p>다른 사례</p>
-        {getAllCases().filter((item) => item.id !== portfolioCase.id).map((item) => (
+      <nav className="case-next" aria-label="다른 업무 사례">
+        <p>{isPublicRnd ? '업무 사례' : '다른 업무 사례'}</p>
+        {relatedCases.map((item) => (
           <Link key={item.id} href={`/cases/${item.slug}/`}>
-            <span>{String(item.order).padStart(2, '0')}</span>
             <strong>{item.title}</strong>
             <span aria-hidden>→</span>
           </Link>
