@@ -20,8 +20,12 @@ for (const relative of required) {
 }
 
 const home = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
-for (const text of ['대표 사례', '커머스·물류 변경 영향 분석', '제조 MES 요구사항 모델링', '실무형 AI 자동화']) {
+for (const text of ['업무 사례', '공개 개발 자료', '커머스·물류 변경 영향 분석', '제조 MES 요구사항 모델링', '실무형 AI 자동화']) {
   if (!home.includes(text)) throw new Error(`홈 화면 필수 문구 없음: ${text}`);
+}
+
+if (home.includes('대표 사례')) {
+  throw new Error('승인되지 않은 대표 사례 표현이 홈에 남아 있음');
 }
 
 for (const file of required.filter((item) => item.endsWith('.html'))) {
