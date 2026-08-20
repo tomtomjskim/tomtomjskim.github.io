@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <rect width="1200" height="630" fill="#f4f3ef"/>
-  <rect x="72" y="72" width="72" height="72" rx="20" fill="#171916"/>
-  <text x="108" y="124" text-anchor="middle" font-size="40" font-weight="800" font-family="Arial, sans-serif" fill="#f4f3ef">T</text>
-  <text x="72" y="278" font-size="72" font-weight="800" font-family="Noto Sans KR, Malgun Gothic, sans-serif" fill="#171916">김정식</text>
-  <text x="72" y="356" font-size="38" font-weight="700" font-family="Noto Sans KR, Malgun Gothic, sans-serif" fill="#214b40">백엔드 개발 포트폴리오</text>
-  <text x="72" y="426" font-size="28" font-family="Noto Sans KR, Malgun Gothic, sans-serif" fill="#565c55">커머스 · 물류 · MES · 내부 도구 · 검증 가능한 AI 활용</text>
-  <line x1="72" y1="520" x2="1128" y2="520" stroke="#cfd2cb" stroke-width="2"/>
-  <text x="72" y="574" font-size="28" font-family="Arial, sans-serif" fill="#171916">tomtomjskim.github.io</text>
+  <rect width="1200" height="630" fill="#ffffff"/>
+  <line x1="72" y1="74" x2="1128" y2="74" stroke="#181818" stroke-width="2"/>
+  <text x="72" y="136" font-size="24" font-weight="600" font-family="Noto Sans KR, Malgun Gothic, sans-serif" fill="#666666">김정식 · TOM</text>
+  <text x="72" y="286" font-size="68" font-weight="700" font-family="Noto Sans KR, Malgun Gothic, sans-serif" fill="#181818">백엔드 개발 포트폴리오</text>
+  <text x="72" y="370" font-size="31" font-family="Noto Sans KR, Malgun Gothic, sans-serif" fill="#444444">커머스 · 물류 · MES · 개발자 도구 · 검증 가능한 AI 활용</text>
+  <line x1="72" y1="500" x2="1128" y2="500" stroke="#d9d9d7" stroke-width="2"/>
+  <text x="72" y="558" font-size="24" font-family="Arial, sans-serif" fill="#181818">tomtomjskim.github.io</text>
+  <text x="1128" y="558" text-anchor="end" font-size="22" font-family="Noto Sans KR, Malgun Gothic, sans-serif" fill="#777777">포트폴리오 · 2026</text>
 </svg>

@@ -11,101 +11,97 @@ import {
 
 export default function HomePage() {
   const cases = getAllCases();
-  const problemSection = extractMarkdownSections(getViewMarkdown('general-backend'), ['해결하는 문제']);
+  const problemSection = extractMarkdownSections(getViewMarkdown('general-backend'), ['해결하는 문제'])
+    .replace(/^## 해결하는 문제\s*/u, '');
   const evidence = getPublicEngineeringEvidence();
 
   return (
-    <>
-      <section className="hero section-shell">
-        <div className="hero-copy">
-          <p className="eyebrow">백엔드 개발 · 업무시스템 · 개발자 도구</p>
-          <h1>복잡한 업무를<br />운영 가능한 시스템으로 바꿉니다.</h1>
-          <p className="hero-description">
-            PHP/MySQL 기반 커머스·물류·MES 업무시스템을 개발·운영해 왔습니다.
-            화면 증상만 고치기보다 상태·데이터·권한·관리자·배치·외부 연동이 연결되는 범위를 먼저 확인합니다.
-          </p>
-          <div className="hero-actions">
-            <Link className="button button-primary" href="#cases">대표 사례 보기</Link>
-            <Link className="button button-secondary" href={getSourceRepositoryUrl()}>GitHub 원문</Link>
-          </div>
+    <div className="home-page">
+      <section className="home-intro section-shell">
+        <p className="intro-kicker">김정식 · 백엔드 개발자</p>
+        <h1>운영 중인 업무시스템의 변경을 안전하게 설계하고 구현합니다.</h1>
+        <p className="intro-lead">
+          PHP/MySQL 기반 커머스·물류·MES 시스템을 개발·운영해 왔습니다.
+          화면에 보이는 증상보다 상태·데이터·권한·관리자·배치·외부 연동이 실제로 연결되는 범위를 먼저 확인합니다.
+        </p>
+        <div className="inline-links" aria-label="주요 링크">
+          <Link href="#cases">대표 사례 보기</Link>
+          <Link href={getSourceRepositoryUrl()}>GitHub 원문 ↗</Link>
         </div>
-        <aside className="hero-dossier" aria-label="핵심 경력 요약">
-          <span className="dossier-label">업무 중심</span>
-          <strong>운영형 백엔드</strong>
-          <p>커머스·물류·MES의 상태와 업무 규칙, 외부 연동을 다룹니다.</p>
-          <div className="dossier-list">
-            <span>PHP / MySQL</span>
-            <span>커머스 · 물류 · MES</span>
-            <span>변경 영향 분석</span>
-            <span>내부 도구 · AI 활용</span>
-          </div>
-        </aside>
+        <dl className="intro-meta">
+          <div><dt>주력</dt><dd>PHP / MySQL 백엔드</dd></div>
+          <div><dt>업무 영역</dt><dd>커머스 · 물류 · MES</dd></div>
+          <div><dt>작업 기준</dt><dd>변경 영향 분석과 검증</dd></div>
+        </dl>
       </section>
 
-      <section className="section section-shell problem-section">
-        <div className="section-heading">
-          <p className="eyebrow">작업 방식</p>
-          <h2>해결하는 문제</h2>
-        </div>
-        <MarkdownDocument markdown={problemSection} />
-      </section>
-
-      <section className="section section-shell" id="cases">
-        <div className="section-heading section-heading-row">
+      <section className="home-section section-shell" id="cases">
+        <header className="editorial-heading">
+          <span className="section-number">01</span>
           <div>
-            <p className="eyebrow">사례</p>
             <h2>대표 사례</h2>
+            <p>각 사례는 문제, 판단, 근거 순서로 정리했습니다.</p>
           </div>
-          <p>문제 → 판단 → 근거 순서로 빠르게 읽을 수 있습니다.</p>
-        </div>
-        <div className="case-grid">
+        </header>
+        <div className="case-index">
           {cases.map((portfolioCase) => <CaseCard key={portfolioCase.id} portfolioCase={portfolioCase} />)}
         </div>
       </section>
 
-      <section className="section section-shell principles-section">
-        <div className="section-heading">
-          <p className="eyebrow">개발 기준</p>
-          <h2>개발 원칙</h2>
-        </div>
-        <div className="principle-grid">
-          <article><span>01</span><h3>변경 영향 범위를 먼저 확인</h3><p>화면과 함수뿐 아니라 DB 상태, 권한, 관리자, batch/cron, 외부 API까지 확인합니다.</p></article>
-          <article><span>02</span><h3>암묵적인 업무 규칙을 명시</h3><p>현업의 요청을 상태·데이터·권한·인터페이스 조건으로 바꿉니다.</p></article>
-          <article><span>03</span><h3>자동화와 사람 판단을 분리</h3><p>규칙이 명확한 부분은 코드로 처리하고 업무 맥락과 최종 결정은 사람이 맡습니다.</p></article>
-          <article><span>04</span><h3>완료 보고보다 실행 결과</h3><p>테스트·E2E·실행 결과와 운영 흐름을 근거로 완료 여부를 판단합니다.</p></article>
+      <section className="home-section section-shell">
+        <header className="editorial-heading">
+          <span className="section-number">02</span>
+          <div>
+            <h2>작업 기준</h2>
+            <p>기술을 먼저 고르기보다 상태와 업무 흐름을 먼저 확인합니다.</p>
+          </div>
+        </header>
+        <div className="method-layout">
+          <div className="method-copy">
+            <MarkdownDocument markdown={problemSection} />
+          </div>
+          <div className="principle-list">
+            <article><span>01</span><div><h3>변경 영향 범위를 먼저 확인</h3><p>화면과 함수뿐 아니라 DB 상태, 권한, 관리자, batch/cron, 외부 API까지 확인합니다.</p></div></article>
+            <article><span>02</span><div><h3>암묵적인 업무 규칙을 명시</h3><p>현업의 요청을 상태·데이터·권한·인터페이스 조건으로 바꿉니다.</p></div></article>
+            <article><span>03</span><div><h3>자동화와 사람 판단을 분리</h3><p>규칙이 명확한 부분은 코드로 처리하고 업무 맥락과 최종 결정은 사람이 맡습니다.</p></div></article>
+            <article><span>04</span><div><h3>완료 보고보다 실행 결과</h3><p>테스트·E2E·실행 결과와 운영 흐름을 근거로 완료 여부를 판단합니다.</p></div></article>
+          </div>
         </div>
       </section>
 
-      <section className="section section-shell">
-        <div className="section-heading section-heading-row">
+      <section className="home-section section-shell">
+        <header className="editorial-heading">
+          <span className="section-number">03</span>
           <div>
-            <p className="eyebrow">공개 개발 자료</p>
             <h2>공개 개발 자료</h2>
+            <p>실무 사례와 별개로 공개 코드와 검증 기록을 확인할 수 있는 자료입니다.</p>
           </div>
-          <Link className="text-link" href="/about/#public-evidence">근거와 한계 보기 <span aria-hidden>→</span></Link>
-        </div>
-        <div className="evidence-grid">
-          {evidence.map((item) => (
-            <article className="evidence-card" key={item.id}>
-              <span>{item.kind}</span>
-              <h3>{item.title}</h3>
+        </header>
+        <div className="evidence-list">
+          {evidence.map((item, index) => (
+            <article className="evidence-row" key={item.id}>
+              <span className="evidence-number">{String(index + 1).padStart(2, '0')}</span>
+              <div>
+                <p className="evidence-kind">{item.kind}</p>
+                <h3>{item.title}</h3>
+              </div>
               <p>{item.shows}</p>
-              {item.repository ? <Link className="text-link" href={item.repository}>저장소 보기 <span aria-hidden>↗</span></Link> : null}
+              {item.repository ? <Link href={item.repository}>저장소 보기 ↗</Link> : <span />}
             </article>
           ))}
         </div>
+        <div className="section-link-row">
+          <Link href="/about/#public-evidence">공개 근거와 한계 보기 →</Link>
+        </div>
       </section>
 
-      <section className="section section-shell closing-cta">
-        <div>
-          <p className="eyebrow">판단 과정</p>
-          <h2>기술 목록보다 판단 과정과 검증 경계를 보여줍니다.</h2>
-        </div>
-        <div className="hero-actions">
-          <Link className="button button-primary" href="/about/">소개와 작업 기준</Link>
-          <Link className="button button-secondary" href="https://github.com/tomtomjskim">GitHub 프로필</Link>
+      <section className="home-end section-shell">
+        <h2>기술 목록보다 판단 과정과 검증 범위를 보여줍니다.</h2>
+        <div className="inline-links">
+          <Link href="/about/">소개와 작업 기준</Link>
+          <Link href="https://github.com/tomtomjskim">GitHub 프로필 ↗</Link>
         </div>
       </section>
-    </>
+    </div>
   );
 }

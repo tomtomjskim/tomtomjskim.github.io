@@ -4,14 +4,14 @@ export function SiteFooter() {
   return (
     <footer className="site-footer">
       <div className="site-footer-inner">
-        <div>
+        <div className="footer-copy">
           <strong>김정식 · TOM</strong>
-          <p>복잡한 업무를 이해하고 운영하기 쉬운 시스템과 개발 도구로 바꿉니다.</p>
+          <span>백엔드 개발 · 업무시스템 · 개발자 도구</span>
         </div>
-        <div className="footer-links">
-          <Link href="https://github.com/tomtomjskim/portfolio">원문 저장소</Link>
-          <Link href="https://github.com/tomtomjskim">GitHub 프로필</Link>
-        </div>
+        <nav className="footer-links" aria-label="하단 링크">
+          <Link href="https://github.com/tomtomjskim/portfolio">포트폴리오 원문 ↗</Link>
+          <Link href="https://github.com/tomtomjskim">GitHub 프로필 ↗</Link>
+        </nav>
       </div>
     </footer>
   );

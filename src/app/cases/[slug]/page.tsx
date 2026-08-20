@@ -34,18 +34,21 @@ export default async function CasePage({ params }: { params: Promise<{ slug: str
   const markdown = removeMarkdownSection(getCaseMarkdown(portfolioCase), '핵심 질문');
   const headings = getMarkdownHeadings(markdown).filter((heading) => heading.level === 2 && heading.text !== '한눈에 보기');
   const sourceUrl = `${getSourceRepositoryUrl()}/blob/main/${portfolioCase.file}`;
+  const classification = portfolioCase.classification === 'public-rnd' ? '공개 개발 자료' : '실무 사례';
 
   return (
     <div className="case-page section-shell">
-      <header className="case-hero">
+      <header className="case-intro">
         <Link className="back-link" href="/#cases">← 대표 사례</Link>
-        <div className="case-hero-meta">
-          <span>CASE {String(portfolioCase.order).padStart(2, '0')}</span>
-          <span>{portfolioCase.classification === 'public-rnd' ? '공개 개발 자료' : '실무 사례'}</span>
+        <div className="case-intro-meta">
+          <span>{String(portfolioCase.order).padStart(2, '0')}</span>
+          <span>{classification}</span>
         </div>
         <h1>{portfolioCase.title}</h1>
-        <p>{portfolioCase.question}</p>
-        <Link className="text-link" href={sourceUrl}>GitHub 원문 보기 <span aria-hidden>↗</span></Link>
+        <p className="case-intro-question">{portfolioCase.question}</p>
+        <div className="inline-links">
+          <Link href={sourceUrl}>GitHub 원문 보기 ↗</Link>
+        </div>
       </header>
 
       <div className="case-layout">
@@ -61,10 +64,12 @@ export default async function CasePage({ params }: { params: Promise<{ slug: str
       </div>
 
       <nav className="case-next" aria-label="다른 사례">
+        <p>다른 사례</p>
         {getAllCases().filter((item) => item.id !== portfolioCase.id).map((item) => (
           <Link key={item.id} href={`/cases/${item.slug}/`}>
             <span>{String(item.order).padStart(2, '0')}</span>
-            {item.title}
+            <strong>{item.title}</strong>
+            <span aria-hidden>→</span>
           </Link>
         ))}
       </nav>
