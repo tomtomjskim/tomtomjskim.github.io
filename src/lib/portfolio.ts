@@ -4,6 +4,7 @@ import path from 'node:path';
 export type CaseClassification =
   | 'sanitized-actual-work'
   | 'sanitized-actual-work-with-public-rnd-support'
+  | 'private-personal-product'
   | 'public-rnd';
 
 export type PortfolioCase = {
@@ -71,7 +72,7 @@ function resolveSourceRoot(): string {
   return sourceRoot;
 }
 
-function readSourceFile(relativePath: string): string {
+function resolveSafeSourcePath(relativePath: string): string {
   const root = resolveSourceRoot();
   const target = path.resolve(root, relativePath);
   const relative = path.relative(root, target);
@@ -80,7 +81,11 @@ function readSourceFile(relativePath: string): string {
     throw new Error(`허용되지 않은 포트폴리오 경로입니다: ${relativePath}`);
   }
 
-  return fs.readFileSync(target, 'utf8');
+  return target;
+}
+
+function readSourceFile(relativePath: string): string {
+  return fs.readFileSync(resolveSafeSourcePath(relativePath), 'utf8');
 }
 
 export function getPortfolioManifest(): PortfolioManifest {
@@ -104,6 +109,27 @@ export function getCaseMarkdown(portfolioCase: PortfolioCase): string {
   return readSourceFile(portfolioCase.file);
 }
 
+export function getSourceAssetDataUri(sourceFile: string, assetHref: string): string {
+  if (/^(?:data:|https?:)/.test(assetHref)) return assetHref;
+
+  const sourceDirectory = path.dirname(sourceFile);
+  const normalized = path.normalize(path.join(sourceDirectory, assetHref));
+  const target = resolveSafeSourcePath(normalized);
+  const extension = path.extname(target).toLowerCase();
+  const mimeTypes: Record<string, string> = {
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.webp': 'image/webp',
+    '.svg': 'image/svg+xml'
+  };
+  const mimeType = mimeTypes[extension];
+  if (!mimeType) throw new Error(`지원하지 않는 포트폴리오 이미지 형식입니다: ${assetHref}`);
+
+  const encoded = fs.readFileSync(target).toString('base64');
+  return `data:${mimeType};base64,${encoded}`;
+}
+
 export function getViewMarkdown(viewId: string): string {
   const view = getPortfolioManifest().views.find((item) => item.id === viewId);
   if (!view) throw new Error(`존재하지 않는 포트폴리오 관점입니다: ${viewId}`);
@@ -121,7 +147,6 @@ export function getPublicBoundaryMarkdown(): string {
 export function stripFirstHeading(markdown: string): string {
   return markdown.replace(/^#\s+.+\r?\n+/, '');
 }
-
 
 export function removeMarkdownSection(markdown: string, heading: string): string {
   const lines = markdown.replace(/\r\n/g, '\n').split('\n');
