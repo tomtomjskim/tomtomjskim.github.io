@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import Link from 'next/link';
+import { getSourceAssetDataUri } from '@/lib/portfolio';
 
 export type HeadingItem = {
   level: number;
@@ -10,6 +11,7 @@ export type HeadingItem = {
 type Block =
   | { type: 'heading'; level: number; text: string }
   | { type: 'paragraph'; text: string }
+  | { type: 'image'; alt: string; href: string }
   | { type: 'list'; ordered: boolean; items: string[] }
   | { type: 'table'; headers: string[]; rows: string[][] }
   | { type: 'code'; language: string; value: string }
@@ -91,6 +93,13 @@ function parseBlocks(markdown: string): Block[] {
       continue;
     }
 
+    const image = /^!\[([^\]]*)\]\(([^)]+)\)$/.exec(line.trim());
+    if (image) {
+      blocks.push({ type: 'image', alt: image[1].trim(), href: image[2].trim() });
+      index += 1;
+      continue;
+    }
+
     const heading = /^(#{1,4})\s+(.+)$/.exec(line);
     if (heading) {
       blocks.push({ type: 'heading', level: heading[1].length, text: heading[2].trim() });
@@ -144,6 +153,7 @@ function parseBlocks(markdown: string): Block[] {
       const next = lines[index];
       if (!next.trim()) break;
       if (/^(#{1,4})\s+/.test(next) || /^```/.test(next.trim()) || /^---+$/.test(next.trim())) break;
+      if (/^!\[[^\]]*\]\([^)]+\)$/.test(next.trim())) break;
       if (/^\s*[-*]\s+/.test(next) || /^\s*\d+\.\s+/.test(next)) break;
       if (
         next.includes('|') &&
@@ -315,7 +325,15 @@ function FlowDiagram({ value }: { value: string }) {
   );
 }
 
-export function MarkdownDocument({ markdown, skipFirstHeading = false }: { markdown: string; skipFirstHeading?: boolean }) {
+export function MarkdownDocument({
+  markdown,
+  skipFirstHeading = false,
+  sourceFile
+}: {
+  markdown: string;
+  skipFirstHeading?: boolean;
+  sourceFile?: string;
+}) {
   const blocks = parseBlocks(markdown);
   let skippedHeading = false;
 
@@ -340,6 +358,17 @@ export function MarkdownDocument({ markdown, skipFirstHeading = false }: { markd
 
         if (block.type === 'paragraph') {
           return <p key={`paragraph-${index}`}>{renderInline(block.text, `paragraph-${index}`)}</p>;
+        }
+
+        if (block.type === 'image') {
+          if (!sourceFile) return null;
+          const src = getSourceAssetDataUri(sourceFile, block.href);
+          return (
+            <figure className="case-media" key={`image-${index}`}>
+              <img src={src} alt={block.alt} loading="lazy" />
+              {block.alt ? <figcaption>{block.alt}</figcaption> : null}
+            </figure>
+          );
         }
 
         if (block.type === 'list') {
