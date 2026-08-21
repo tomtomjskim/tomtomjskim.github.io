@@ -8,7 +8,11 @@ import {
 
 export default function HomePage() {
   const cases = getAllCases();
-  const workCases = cases.filter((item) => item.classification !== 'public-rnd');
+  const workCases = cases.filter((item) =>
+    item.classification === 'sanitized-actual-work' ||
+    item.classification === 'sanitized-actual-work-with-public-rnd-support'
+  );
+  const personalCases = cases.filter((item) => item.classification === 'private-personal-product');
   const publicCases = cases.filter((item) => item.classification === 'public-rnd');
   const evidence = getPublicEngineeringEvidence();
 
@@ -43,6 +47,20 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {personalCases.length ? (
+        <section className="index-section section-shell" id="personal">
+          <header className="index-section-heading">
+            <h2>개인 실사용 프로젝트</h2>
+            <p>실제 개인 운영 환경에서 사용한 비공개 프로젝트를 합성 화면과 비식별화한 구조로 정리했습니다.</p>
+          </header>
+          <div className="case-index">
+            {personalCases.map((portfolioCase) => (
+              <CaseCard key={portfolioCase.id} portfolioCase={portfolioCase} />
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="index-section section-shell" id="public">
         <header className="index-section-heading">

@@ -42,18 +42,24 @@ export default async function CasePage({ params }: { params: Promise<{ slug: str
 
   const allCases = getAllCases();
   const isPublicRnd = portfolioCase.classification === 'public-rnd';
+  const isPersonalProject = portfolioCase.classification === 'private-personal-product';
   const markdown = privateOnlySections.reduce(
     (current, section) => removeMarkdownSection(current, section),
     getCaseMarkdown(portfolioCase)
   );
   const headings = getMarkdownHeadings(markdown).filter((heading) => heading.level === 2 && heading.text !== '한눈에 보기');
   const sourceUrl = `${getSourceRepositoryUrl()}/blob/main/${portfolioCase.file}`;
-  const classification = isPublicRnd ? '공개 개발 자료' : '업무 사례';
-  const backHref = isPublicRnd ? '/#public' : '/#work';
-  const backLabel = isPublicRnd ? '공개 개발 자료' : '업무 사례';
-  const relatedCases = isPublicRnd
-    ? allCases.filter((item) => item.classification !== 'public-rnd')
-    : allCases.filter((item) => item.classification !== 'public-rnd' && item.id !== portfolioCase.id);
+
+  const classification = isPublicRnd
+    ? '공개 개발 자료'
+    : isPersonalProject
+      ? '개인 실사용 프로젝트'
+      : '업무 사례';
+  const backHref = isPublicRnd ? '/#public' : isPersonalProject ? '/#personal' : '/#work';
+  const backLabel = classification;
+  const relatedCases = allCases.filter(
+    (item) => item.classification !== 'public-rnd' && item.id !== portfolioCase.id
+  );
 
   return (
     <div className="case-page section-shell">
@@ -73,12 +79,12 @@ export default async function CasePage({ params }: { params: Promise<{ slug: str
           </nav>
         </aside>
         <article className="case-article">
-          <MarkdownDocument markdown={markdown} skipFirstHeading />
+          <MarkdownDocument markdown={markdown} skipFirstHeading sourceFile={portfolioCase.file} />
         </article>
       </div>
 
-      <nav className="case-next" aria-label="다른 업무 사례">
-        <p>{isPublicRnd ? '업무 사례' : '다른 업무 사례'}</p>
+      <nav className="case-next" aria-label="다른 사례">
+        <p>다른 사례</p>
         {relatedCases.map((item) => (
           <Link key={item.id} href={`/cases/${item.slug}/`}>
             <strong>{item.title}</strong>

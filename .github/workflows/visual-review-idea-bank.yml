@@ -1,0 +1,115 @@
+name: Idea Bank visual review
+
+on:
+  push:
+    branches:
+      - site/idea-bank-personal-project
+    paths:
+      - .github/workflows/visual-review-idea-bank.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/visual-review-idea-bank.yml
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout site
+        uses: actions/checkout@v6
+
+      - name: Checkout portfolio source
+        uses: actions/checkout@v6
+        with:
+          repository: tomtomjskim/portfolio
+          ref: main
+          path: portfolio-source
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Start review server
+        env:
+          PORTFOLIO_SOURCE_DIR: portfolio-source
+        run: |
+          npm run dev -- --hostname 127.0.0.1 --port 3000 > /tmp/io-review.log 2>&1 &
+          for attempt in $(seq 1 60); do
+            if curl --silent --fail http://127.0.0.1:3000/ >/dev/null; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/io-review.log
+          exit 1
+
+      - name: Capture desktop and mobile screens
+        run: |
+          mkdir -p visual-review
+          node --input-type=module <<'NODE'
+          import { chromium } from 'playwright';
+          const browser = await chromium.launch({ headless: true });
+          const targets = [
+            ['home-desktop.png', '/', 1440, 1000],
+            ['idea-case-desktop.png', '/cases/idea-workflow-automation/', 1440, 1200],
+            ['home-mobile.png', '/', 390, 844],
+            ['idea-case-mobile.png', '/cases/idea-workflow-automation/', 390, 844]
+          ];
+          for (const [file, pathname, width, height] of targets) {
+            const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 1 });
+            await page.goto(`http://127.0.0.1:3000${pathname}`, { waitUntil: 'networkidle' });
+            await page.screenshot({ path: `visual-review/${file}`, fullPage: false });
+            await page.close();
+          }
+
+          const casePage = await browser.newPage({ viewport: { width: 1440, height: 1200 }, deviceScaleFactor: 1 });
+          await casePage.goto('http://127.0.0.1:3000/cases/idea-workflow-automation/', { waitUntil: 'networkidle' });
+          const media = casePage.locator('.case-media');
+          if (await media.count() !== 2) throw new Error('Expected two embedded case media figures');
+
+          const images = casePage.locator('.case-media img');
+          if (await images.count() !== 2) throw new Error('Expected two embedded case images');
+          for (let index = 0; index < 2; index += 1) {
+            const image = images.nth(index);
+            await image.scrollIntoViewIfNeeded();
+            await image.evaluate(async (element) => {
+              const img = element;
+              if (!img.complete) {
+                await new Promise((resolve, reject) => {
+                  img.addEventListener('load', resolve, { once: true });
+                  img.addEventListener('error', reject, { once: true });
+                });
+              }
+              await img.decode();
+              if (img.naturalWidth < 700 || img.naturalHeight < 400) {
+                throw new Error(`Unexpected embedded image size: ${img.naturalWidth}x${img.naturalHeight}`);
+              }
+            });
+          }
+
+          await media.nth(0).screenshot({ path: 'visual-review/idea-triage-embedded.png' });
+          await media.nth(1).screenshot({ path: 'visual-review/idea-proposal-embedded.png' });
+          await casePage.close();
+
+          await browser.close();
+          NODE
+
+      - name: Upload visual review
+        uses: actions/upload-artifact@v4
+        with:
+          name: idea-bank-pages-visual-review
+          path: visual-review/*.png
+          retention-days: 7

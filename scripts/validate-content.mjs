@@ -16,16 +16,39 @@ if (!Array.isArray(manifest.cases) || manifest.cases.length !== 4) {
   throw new Error('portfolio-manifest.json에는 4개 사례가 있어야 합니다.');
 }
 
+const allowedClassifications = new Set([
+  'sanitized-actual-work',
+  'sanitized-actual-work-with-public-rnd-support',
+  'private-personal-product',
+  'public-rnd'
+]);
+
 const slugs = new Set();
 for (const item of manifest.cases) {
   if (!item.slug || slugs.has(item.slug)) throw new Error(`사례 slug가 없거나 중복됨: ${item.slug}`);
   slugs.add(item.slug);
+
+  if (!allowedClassifications.has(item.classification)) {
+    throw new Error(`지원하지 않는 사례 분류: ${item.classification}`);
+  }
+
   const file = path.join(source, item.file);
   if (!fs.existsSync(file)) throw new Error(`사례 원문 파일 없음: ${item.file}`);
   const text = fs.readFileSync(file, 'utf8');
   for (const heading of ['## 핵심 질문', '## 한눈에 보기', '## 문제', '## 판단', '## 검증과 실제 사용', '## 한계', '## 근거']) {
     if (!text.includes(heading)) throw new Error(`${item.file}: 필수 제목 없음: ${heading}`);
   }
+
+  for (const match of text.matchAll(/!\[[^\]]*\]\(([^)]+)\)/g)) {
+    const asset = path.resolve(path.dirname(file), match[1]);
+    const relative = path.relative(source, asset);
+    if (relative.startsWith('..') || path.isAbsolute(relative)) {
+      throw new Error(`${item.file}: 포트폴리오 원문 밖의 이미지 경로: ${match[1]}`);
+    }
+    if (!fs.existsSync(asset)) {
+      throw new Error(`${item.file}: 이미지 파일 없음: ${match[1]}`);
+    }
+  }
 }
 
-console.log(`확인 완료: ${manifest.cases.length}개 사례와 원문 경로가 정상입니다.`);
+console.log(`확인 완료: ${manifest.cases.length}개 사례와 원문·이미지 경로가 정상입니다.`);
