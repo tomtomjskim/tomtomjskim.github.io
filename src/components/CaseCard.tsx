@@ -4,6 +4,7 @@ import type { PortfolioCase } from '@/lib/portfolio';
 const classificationLabel: Record<PortfolioCase['classification'], string> = {
   'sanitized-actual-work': '실무 사례',
   'sanitized-actual-work-with-public-rnd-support': '실무 적용 · 공개 자료',
+  'private-personal-product': '개인 실사용 프로젝트',
   'public-rnd': '공개 개발 자료'
 };
 
