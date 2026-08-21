@@ -1,0 +1,33 @@
+.case-media {
+  margin: 28px 0 34px;
+}
+
+.case-media img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.case-media figcaption {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+@media (max-width: 620px) {
+  .case-media {
+    margin: 22px -16px 28px;
+  }
+
+  .case-media img {
+    border-left: 0;
+    border-right: 0;
+  }
+
+  .case-media figcaption {
+    padding: 0 16px;
+  }
+}
