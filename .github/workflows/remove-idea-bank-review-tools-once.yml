@@ -1,0 +1,38 @@
+name: Remove Idea Bank review tools once
+
+on:
+  push:
+    branches:
+      - chore/remove-idea-bank-review-tools
+    paths:
+      - .github/workflows/remove-idea-bank-review-tools-once.yml
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Remove temporary review files
+        run: |
+          rm -f .visual-rerun-trigger
+          rm -f .github/workflows/visual-review-idea-bank.yml
+          rm -f .github/workflows/remove-idea-bank-review-tools-once.yml
+
+      - name: Commit cleanup
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -u -- .visual-rerun-trigger .github/workflows/visual-review-idea-bank.yml .github/workflows/remove-idea-bank-review-tools-once.yml
+          if git diff --cached --quiet; then
+            echo 'No temporary files to remove.'
+            exit 0
+          fi
+          git commit -m 'chore: remove temporary Idea Bank review tools'
+          git push origin HEAD:${{ github.ref_name }}
