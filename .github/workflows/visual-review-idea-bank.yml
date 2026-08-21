@@ -74,6 +74,15 @@ jobs:
             await page.screenshot({ path: `visual-review/${file}`, fullPage: false });
             await page.close();
           }
+
+          const casePage = await browser.newPage({ viewport: { width: 1440, height: 1200 }, deviceScaleFactor: 1 });
+          await casePage.goto('http://127.0.0.1:3000/cases/idea-workflow-automation/', { waitUntil: 'networkidle' });
+          const media = casePage.locator('.case-media');
+          if (await media.count() !== 2) throw new Error('Expected two embedded case media figures');
+          await media.nth(0).screenshot({ path: 'visual-review/idea-triage-embedded.png' });
+          await media.nth(1).screenshot({ path: 'visual-review/idea-proposal-embedded.png' });
+          await casePage.close();
+
           await browser.close();
           NODE
 
