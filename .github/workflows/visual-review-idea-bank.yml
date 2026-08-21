@@ -6,6 +6,11 @@ on:
       - site/idea-bank-personal-project
     paths:
       - .github/workflows/visual-review-idea-bank.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - .github/workflows/visual-review-idea-bank.yml
 
 permissions:
   contents: read
